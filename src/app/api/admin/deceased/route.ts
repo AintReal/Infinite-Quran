@@ -13,11 +13,15 @@ export async function GET(req: NextRequest) {
   const perPage = 20;
   const search = searchParams.get("search") || "";
   const status = searchParams.get("status") || "";
+  const sort = searchParams.get("sort") || "newest";
+
+  const orderCol = sort === "most_views" ? "visits" : "id";
+  const ascending = false;
 
   let query = supabaseAdmin
     .from("deceased")
     .select("*", { count: "exact" })
-    .order("id", { ascending: false })
+    .order(orderCol, { ascending })
     .range((page - 1) * perPage, page * perPage - 1);
 
   if (search) query = query.ilike("name", `%${search}%`);

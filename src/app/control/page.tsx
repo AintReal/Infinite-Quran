@@ -14,6 +14,7 @@ export default function AdminDashboard() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
@@ -21,6 +22,7 @@ export default function AdminDashboard() {
     const params = new URLSearchParams({ page: page.toString() });
     if (search) params.set("search", search);
     if (statusFilter) params.set("status", statusFilter);
+    if (sortBy) params.set("sort", sortBy);
 
     const res = await fetch(`/api/admin/deceased?${params}`);
     if (res.status === 401) {
@@ -31,7 +33,7 @@ export default function AdminDashboard() {
     setData(json.data || []);
     setTotal(json.total || 0);
     setLoading(false);
-  }, [page, search, statusFilter, router]);
+  }, [page, search, statusFilter, sortBy, router]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -108,6 +110,14 @@ export default function AdminDashboard() {
             <option value="approved">مفعّل</option>
             <option value="pending">معلّق</option>
             <option value="rejected">مرفوض</option>
+          </select>
+          <select
+            value={sortBy}
+            onChange={(e) => { setSortBy(e.target.value); setPage(1); }}
+            className="rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-primary"
+          >
+            <option value="newest">الأحدث</option>
+            <option value="most_views">الأكثر زيارة</option>
           </select>
         </div>
 
