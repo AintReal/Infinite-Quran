@@ -19,6 +19,7 @@
 
 # production
 /build
+001_schema.sql
 
 # misc
 .DS_Store
