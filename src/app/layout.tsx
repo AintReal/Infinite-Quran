@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://quran.ather.sa";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://quranwaqf.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -9,8 +9,8 @@ export const metadata: Metadata = {
     default: "الإذاعة القرآنية | إذاعة قرآنية على مدار الساعة",
     template: "%s | الإذاعة القرآنية",
   },
-  description: "صدقة جارية - إذاعة قرآنية على مدار الساعة لروح المتوفى. سجّل اسم المتوفى واجعل القرآن يُتلى له على مدار الساعة.",
-  keywords: ["قرآن", "صدقة جارية", "متوفى", "إذاعة قرآنية", "quran", "radio", "sadaqah"],
+  description: "صدقة جارية - إذاعة قرآنية على مدار الساعة. أنشئ صفحة قرآنية لمن تحب.",
+  keywords: ["قرآن", "صدقة جارية", "إذاعة قرآنية", "صفحة قرآنية", "quran", "radio", "sadaqah"],
   authors: [{ name: "Ather" }],
   creator: "Ather",
   publisher: "Ather",
@@ -25,13 +25,13 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: "الإذاعة القرآنية",
     title: "الإذاعة القرآنية | إذاعة قرآنية على مدار الساعة",
-    description: "صدقة جارية - إذاعة قرآنية على مدار الساعة لروح المتوفى",
+    description: "صدقة جارية - إذاعة قرآنية على مدار الساعة",
     images: [{ url: "/og-image.png", width: 512, height: 512, alt: "الإذاعة القرآنية" }],
   },
   twitter: {
     card: "summary",
     title: "الإذاعة القرآنية",
-    description: "صدقة جارية - إذاعة قرآنية على مدار الساعة لروح المتوفى",
+    description: "صدقة جارية - إذاعة قرآنية على مدار الساعة",
     images: ["/og-image.png"],
   },
   alternates: {

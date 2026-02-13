@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
 import { locales } from "@/lib/i18n";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://quran.ather.sa";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://quranwaqf.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { data: deceased } = await supabase

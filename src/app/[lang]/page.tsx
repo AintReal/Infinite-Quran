@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Users, Radio, Globe, Clock, Headphones, ArrowLeft, ArrowRight } from "lucide-react";
+import { Users, Radio, Globe, Clock, Headphones, ArrowLeft, ArrowRight, TrendingUp } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { t, isRtl, type Locale } from "@/lib/i18n";
 import LangSwitcher from "@/components/LangSwitcher";
@@ -15,12 +15,57 @@ async function getStats() {
 async function getRecent() {
   const { data } = await supabase
     .from("deceased")
-    .select("id, name, created_at")
+    .select("id, name, country, created_at")
     .eq("status", "approved")
     .order("created_at", { ascending: false })
     .limit(6);
   return data ?? [];
 }
+
+async function getMostListened() {
+  const { data } = await supabase
+    .from("deceased")
+    .select("id, name, visits")
+    .eq("status", "approved")
+    .gt("visits", 0)
+    .order("visits", { ascending: false })
+    .limit(6);
+  return data ?? [];
+}
+
+const countryFlags: Record<string, string> = {
+  "السعودية": "🇸🇦", "Saudi Arabia": "🇸🇦", "Arab Saudi": "🇸🇦", "Arabie Saoudite": "🇸🇦",
+  "الإمارات": "🇦🇪", "UAE": "🇦🇪", "UEA": "🇦🇪", "EAU": "🇦🇪",
+  "الكويت": "🇰🇼", "Kuwait": "🇰🇼", "Koweït": "🇰🇼",
+  "البحرين": "🇧🇭", "Bahrain": "🇧🇭", "Bahreïn": "🇧🇭",
+  "قطر": "🇶🇦", "Qatar": "🇶🇦",
+  "عمان": "🇴🇲", "Oman": "🇴🇲",
+  "مصر": "🇪🇬", "Egypt": "🇪🇬", "Mesir": "🇪🇬", "Égypte": "🇪🇬",
+  "الأردن": "🇯🇴", "Jordan": "🇯🇴", "Yordania": "🇯🇴", "Jordanie": "🇯🇴",
+  "العراق": "🇮🇶", "Iraq": "🇮🇶", "Irak": "🇮🇶",
+  "فلسطين": "🇵🇸", "Palestine": "🇵🇸", "Palestina": "🇵🇸",
+  "لبنان": "🇱🇧", "Lebanon": "🇱🇧", "Liban": "🇱🇧",
+  "سوريا": "🇸🇾", "Syria": "🇸🇾", "Suriah": "🇸🇾", "Syrie": "🇸🇾",
+  "اليمن": "🇾🇪", "Yemen": "🇾🇪", "Yaman": "🇾🇪", "Yémen": "🇾🇪",
+  "ليبيا": "🇱🇾", "Libya": "🇱🇾", "Libye": "🇱🇾",
+  "تونس": "🇹🇳", "Tunisia": "🇹🇳", "Tunisie": "🇹🇳",
+  "الجزائر": "🇩🇿", "Algeria": "🇩🇿", "Aljazair": "🇩🇿", "Algérie": "🇩🇿",
+  "المغرب": "🇲🇦", "Morocco": "🇲🇦", "Maroko": "🇲🇦", "Maroc": "🇲🇦",
+  "السودان": "🇸🇩", "Sudan": "🇸🇩", "Soudan": "🇸🇩",
+  "الصومال": "🇸🇴", "Somalia": "🇸🇴", "Somalie": "🇸🇴",
+  "جيبوتي": "🇩🇯", "Djibouti": "🇩🇯",
+  "موريتانيا": "🇲🇷", "Mauritania": "🇲🇷", "Mauritanie": "🇲🇷",
+  "تركيا": "🇹🇷", "Turkey": "🇹🇷", "Turki": "🇹🇷", "Turquie": "🇹🇷",
+  "ماليزيا": "🇲🇾", "Malaysia": "🇲🇾", "Malaisie": "🇲🇾",
+  "إندونيسيا": "🇮🇩", "Indonesia": "🇮🇩", "Indonésie": "🇮🇩",
+  "باكستان": "🇵🇰", "Pakistan": "🇵🇰",
+  "الهند": "🇮🇳", "India": "🇮🇳", "Inde": "🇮🇳",
+  "فرنسا": "🇫🇷", "France": "🇫🇷", "Prancis": "🇫🇷",
+  "بريطانيا": "🇬🇧", "UK": "🇬🇧", "Inggris": "🇬🇧", "Royaume-Uni": "🇬🇧",
+  "أمريكا": "🇺🇸", "USA": "🇺🇸", "Amerika": "🇺🇸", "États-Unis": "🇺🇸",
+  "كندا": "🇨🇦", "Canada": "🇨🇦", "Kanada": "🇨🇦",
+  "ألمانيا": "🇩🇪", "Germany": "🇩🇪", "Jerman": "🇩🇪", "Allemagne": "🇩🇪",
+};
 
 type Props = { params: Promise<{ lang: string }> };
 
@@ -31,7 +76,7 @@ export default async function Home({ params }: Props) {
   const rtl = isRtl(locale);
   const Arrow = rtl ? ArrowLeft : ArrowRight;
 
-  const [stats, recent] = await Promise.all([getStats(), getRecent()]);
+  const [stats, recent, mostListened] = await Promise.all([getStats(), getRecent(), getMostListened()]);
 
   return (
     <main className="min-h-screen bg-white">
@@ -47,7 +92,7 @@ export default async function Home({ params }: Props) {
           <Image src="/logo.png" alt={d.siteTitle} width={140} height={140} className="brightness-0 invert" />
         </div>
 
-        <div className="relative z-10 flex flex-col items-center gap-4 px-4 text-center mt-16">
+        <div className="relative z-10 flex flex-col items-center gap-4 px-4 text-center mt-16 pb-44 md:pb-36">
           <h1 className="text-2xl font-bold leading-relaxed md:text-4xl max-w-3xl">
             {d.heroLine1}
           </h1>
@@ -123,6 +168,9 @@ export default async function Home({ params }: Props) {
                   <Headphones size={16} />
                 </div>
                 <span className="font-medium text-gray-800">{person.name}</span>
+                {person.country && countryFlags[person.country] && (
+                  <span className="text-sm">{countryFlags[person.country]}</span>
+                )}
               </div>
               <Arrow size={16} className="text-primary opacity-0 transition group-hover:opacity-100" />
             </Link>
@@ -137,6 +185,31 @@ export default async function Home({ params }: Props) {
           </Link>
         </div>
       </section>
+
+      {mostListened.length > 0 && (
+        <section className="bg-cream/20 py-16 px-4">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="mb-8 text-center text-2xl font-bold text-primary">{d.mostListened}</h2>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {mostListened.map((person) => (
+                <Link
+                  key={person.id}
+                  href={`/${locale}/${person.id}`}
+                  className="group flex items-center justify-between rounded-2xl border border-cream bg-white p-4 transition hover:border-primary/20 hover:shadow-md"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/5 text-primary">
+                      <TrendingUp size={16} />
+                    </div>
+                    <span className="font-medium text-gray-800">{person.name}</span>
+                  </div>
+                  <span className="text-xs text-gray-400">{person.visits.toLocaleString("en-US")} {d.statsListeners}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <div className="bg-primary py-8 text-center">
         <p className="text-sm text-cream/80 leading-relaxed">{d.footerLine}</p>

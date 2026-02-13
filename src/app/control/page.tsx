@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Search, Trash2, CheckCircle, XCircle, Pause, LogOut, ExternalLink } from "lucide-react";
+import { Search, Trash2, CheckCircle, XCircle, Pause, LogOut, ExternalLink, Copy, Check } from "lucide-react";
 import type { Deceased } from "@/lib/types";
 
 export default function AdminDashboard() {
@@ -16,6 +16,13 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
+
+  const copyLink = async (id: number) => {
+    await navigator.clipboard.writeText(`https://quranwaqf.com/ar/${id}`);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -151,6 +158,9 @@ export default function AdminDashboard() {
                         <a href={`/${d.id}`} target="_blank" className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-primary transition">
                           <ExternalLink size={15} />
                         </a>
+                        <button onClick={() => copyLink(d.id)} className="rounded p-1 text-gray-400 hover:bg-blue-50 hover:text-blue-600 transition" title="نسخ الرابط">
+                          {copiedId === d.id ? <Check size={15} className="text-green-500" /> : <Copy size={15} />}
+                        </button>
                         {d.status !== "approved" && (
                           <button onClick={() => updateStatus(d.id, "approved")} className="rounded p-1 text-gray-400 hover:bg-green-50 hover:text-green-600 transition">
                             <CheckCircle size={15} />

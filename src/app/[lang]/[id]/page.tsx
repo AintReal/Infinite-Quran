@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, Share2 } from "lucide-react";
+import { Eye, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase, AUDIO_BUCKET, AUDIO_FOLDER } from "@/lib/supabase";
-import { t, isValidLocale, type Locale } from "@/lib/i18n";
+import { t, isValidLocale, isRtl, type Locale } from "@/lib/i18n";
 import AudioPlayer from "@/components/AudioPlayer";
 import ShareButtons from "@/components/ShareButtons";
 import ViewTracker from "./ViewTracker";
@@ -17,9 +17,9 @@ export async function generateMetadata({ params }: Props) {
   const { lang, id } = await params;
   const { data } = await supabase.from("deceased").select("name, companion_text").eq("id", id).eq("status", "approved").single();
   if (!data) return { title: "غير موجود" };
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://quran.ather.sa";
-  const title = `${data.name} ${data.companion_text} - وقف القرآن الكريم`;
-  const description = `استمع للقرآن الكريم صدقة جارية لروح ${data.name} ${data.companion_text}`;
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://quranwaqf.com";
+  const title = `${data.name} ${data.companion_text} - إذاعة قرآنية`;
+  const description = `استمع للقرآن الكريم — إذاعة قرآنية لـ ${data.name} ${data.companion_text}`;
   return {
     title,
     description,
@@ -38,15 +38,21 @@ export default async function SlugPage({ params }: Props) {
   if (!isValidLocale(lang)) notFound();
   const locale = lang as Locale;
   const d = t(locale);
+  const rtl = isRtl(locale);
   const numId = parseInt(id);
   if (isNaN(numId)) notFound();
 
-  const [{ data: person }, { data: audioFiles }] = await Promise.all([
+  const [{ data: person }, { data: audioFiles }, { data: prevRow }, { data: nextRow }] = await Promise.all([
     supabase.from("deceased").select("*").eq("id", numId).eq("status", "approved").single(),
     supabase.from("audio_files").select("file_name, surah_name_ar, reciter_ar").eq("is_active", true),
+    supabase.from("deceased").select("id").eq("status", "approved").lt("id", numId).order("id", { ascending: false }).limit(1).single(),
+    supabase.from("deceased").select("id").eq("status", "approved").gt("id", numId).order("id", { ascending: true }).limit(1).single(),
   ]);
 
   if (!person) notFound();
+
+  const prevId = prevRow?.id ?? null;
+  const nextId = nextRow?.id ?? null;
 
   const audioList = (audioFiles ?? []).map((a) => ({
     file_name: a.file_name,
@@ -54,7 +60,7 @@ export default async function SlugPage({ params }: Props) {
     reciter_ar: a.reciter_ar,
   }));
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://quran.ather.sa";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://quranwaqf.com";
   const audioBaseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${AUDIO_BUCKET}/${AUDIO_FOLDER}`;
 
   return (
@@ -62,7 +68,7 @@ export default async function SlugPage({ params }: Props) {
       <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23006001' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
 
       <ViewTracker id={numId} />
-      <CongratsPopup url={`${siteUrl}/${locale}/${person.id}`} name={person.name} d={d} />
+      <CongratsPopup url={`${siteUrl}/${locale}/${person.id}`} name={person.name} companionText={person.companion_text} d={d} />
 
       <div className="relative z-10 w-full max-w-lg animate-fade-in">
         <div className="overflow-hidden rounded-3xl bg-white shadow-2xl shadow-primary/10 border border-cream">
@@ -96,7 +102,7 @@ export default async function SlugPage({ params }: Props) {
               <Share2 size={13} />
               {d.shareMessage}
             </p>
-            <ShareButtons url={`${siteUrl}/${locale}/${person.id}`} name={person.name} />
+            <ShareButtons url={`${siteUrl}/${locale}/${person.id}`} name={person.name} companionText={person.companion_text} />
           </div>
         </div>
 
@@ -106,6 +112,25 @@ export default async function SlugPage({ params }: Props) {
         >
           {d.createYourOwn}
         </Link>
+
+        <div className="mt-4 flex items-center justify-between">
+          {prevId ? (
+            <Link
+              href={`/${locale}/${prevId}`}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-white border border-cream shadow-sm text-primary transition hover:bg-cream/30"
+            >
+              {rtl ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+            </Link>
+          ) : <span />}
+          {nextId ? (
+            <Link
+              href={`/${locale}/${nextId}`}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-white border border-cream shadow-sm text-primary transition hover:bg-cream/30"
+            >
+              {rtl ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+            </Link>
+          ) : <span />}
+        </div>
       </div>
     </main>
   );

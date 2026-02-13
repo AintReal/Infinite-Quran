@@ -2,9 +2,9 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "وقف القرآن الكريم",
-    short_name: "وقف القرآن",
-    description: "صدقة جارية - إذاعة قرآنية على مدار الساعة لروح المتوفى",
+    name: "الإذاعة القرآنية",
+    short_name: "الإذاعة القرآنية",
+    description: "صدقة جارية - إذاعة قرآنية على مدار الساعة",
     start_url: "/",
     display: "standalone",
     background_color: "#ffffff",

@@ -3,14 +3,16 @@
 import { Copy, Check } from "lucide-react";
 import { useState } from "react";
 
-type Props = { url: string; name: string };
+type Props = { url: string; name: string; companionText?: string };
 
-export default function ShareButtons({ url, name }: Props) {
+export default function ShareButtons({ url, name, companionText }: Props) {
   const [copied, setCopied] = useState(false);
-  const text = `صدقة جارية عن ${name} — استمع للقرآن الكريم`;
+  const text = companionText
+    ? `إذاعة قرآنية لـ ${name} ${companionText}\nاستمع للاذاعة القرانية.. ولك الأجر\n${url}\nلا توقف عندك .. انشرها`
+    : `صدقة جارية عن ${name} — استمع للقرآن الكريم\n${url}`;
 
   const copy = async () => {
-    await navigator.clipboard.writeText(url);
+    await navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -18,7 +20,7 @@ export default function ShareButtons({ url, name }: Props) {
   const buttons = [
     {
       label: "واتساب",
-      href: `https://wa.me/?text=${encodeURIComponent(text + "\n" + url)}`,
+      href: `https://wa.me/?text=${encodeURIComponent(text)}`,
       bg: "bg-[#25D366]",
       icon: (
         <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
@@ -28,7 +30,7 @@ export default function ShareButtons({ url, name }: Props) {
     },
     {
       label: "تليجرام",
-      href: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
+      href: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text.replace(url, "").trim())}`,
       bg: "bg-[#0088cc]",
       icon: (
         <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
@@ -38,7 +40,7 @@ export default function ShareButtons({ url, name }: Props) {
     },
     {
       label: "تويتر",
-      href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+      href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`,
       bg: "bg-black",
       icon: (
         <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
