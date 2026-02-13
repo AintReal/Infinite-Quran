@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
       id: nextId,
       name,
       companion_text: companion_text || "رحمه الله تعالى",
-      country: country || "غير محدد",
+      country: country || "السعودية",
       language: "ar",
       created_by_name,
       created_by_email: created_by_email || null,

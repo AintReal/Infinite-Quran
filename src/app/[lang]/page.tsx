@@ -43,15 +43,22 @@ export default async function Home({ params }: Props) {
           <LangSwitcher current={locale} />
         </div>
 
-        <div className="relative z-10 flex flex-col items-center gap-5 px-4 text-center">
-          <Image src="/logo.png" alt={d.siteTitle} width={100} height={100} className="brightness-0 invert mb-2" />
+        <div className="absolute top-6 right-6 z-20">
+          <Image src="/logo.png" alt={d.siteTitle} width={140} height={140} className="brightness-0 invert" />
+        </div>
 
-          <h1 dir="rtl" className="text-lg font-bold leading-relaxed md:text-2xl max-w-2xl whitespace-nowrap">
-            ﴿ إِنَّا نَحْنُ نُحْيِي الْمَوْتَىٰ وَنَكْتُبُ مَا قَدَّمُوا وَآثَارَهُمْ ﴾
+        <div className="relative z-10 flex flex-col items-center gap-4 px-4 text-center mt-16">
+          <h1 className="text-2xl font-bold leading-relaxed md:text-4xl max-w-3xl">
+            {d.heroLine1}
           </h1>
-          <p className="text-sm text-cream/60">{d.surahYasRef}</p>
+          <p className="text-lg md:text-2xl text-cream/80 font-medium">{d.heroLine2}</p>
 
-          <div className="flex flex-col sm:flex-row gap-3 mt-2">
+          <p dir="rtl" className="text-sm md:text-base text-white/50 mt-2 max-w-2xl">
+            ﴿ إِنَّا نَحْنُ نُحْيِي الْمَوْتَىٰ وَنَكْتُبُ مَا قَدَّمُوا وَآثَارَهُمْ ﴾
+          </p>
+          <p className="text-xs text-cream/40">{d.surahYasRef}</p>
+
+          <div className="flex flex-col sm:flex-row gap-3 mt-3">
             <Link
               href={`/${locale}/register`}
               className="rounded-xl bg-cream px-8 py-3 text-base font-bold text-primary shadow-lg transition hover:opacity-80"

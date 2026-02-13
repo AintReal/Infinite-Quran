@@ -68,7 +68,7 @@ export default function RegisterPage() {
         setLoading(false);
         return;
       }
-      router.push(`/${locale}/${data.id}`);
+      router.push(`/${locale}/${data.id}?new=1`);
     } catch {
       setError(d.connectionError);
       setLoading(false);

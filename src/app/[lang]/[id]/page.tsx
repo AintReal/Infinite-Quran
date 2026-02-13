@@ -7,6 +7,7 @@ import { t, isValidLocale, type Locale } from "@/lib/i18n";
 import AudioPlayer from "@/components/AudioPlayer";
 import ShareButtons from "@/components/ShareButtons";
 import ViewTracker from "./ViewTracker";
+import CongratsPopup from "./CongratsPopup";
 
 export const revalidate = 0;
 
@@ -57,42 +58,54 @@ export default async function SlugPage({ params }: Props) {
   const audioBaseUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${AUDIO_BUCKET}/${AUDIO_FOLDER}`;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-cream/40 via-white to-cream/40 px-4 py-6">
-      <ViewTracker id={numId} />
+    <main className="relative flex min-h-screen flex-col items-center justify-center px-4 py-8 overflow-hidden" style={{ backgroundColor: "#F5EFE0" }}>
+      <div className="pointer-events-none absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23006001' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
 
-      <div className="w-full max-w-md animate-fade-in">
+      <ViewTracker id={numId} />
+      <CongratsPopup url={`${siteUrl}/${locale}/${person.id}`} name={person.name} d={d} />
+
+      <div className="relative z-10 w-full max-w-lg animate-fade-in">
         <div className="overflow-hidden rounded-3xl bg-white shadow-2xl shadow-primary/10 border border-cream">
-          <div className="bg-primary px-6 py-4 text-center">
+          <div className="bg-primary px-6 py-6 text-center">
             <Link href={`/${locale}`} className="inline-block">
-              <Image src="/logo.png" alt={d.siteTitle} width={70} height={70} className="mx-auto brightness-0 invert" />
+              <Image src="/logo.png" alt={d.siteTitle} width={80} height={80} className="mx-auto brightness-0 invert" />
             </Link>
           </div>
 
-          <div className="px-6 pt-4 pb-3 text-center border-b border-cream">
-            <p className="text-xs text-primary mb-2">﴿ إِنَّا نَحْنُ نُحْيِي الْمَوْتَىٰ وَنَكْتُبُ مَا قَدَّمُوا وَآثَارَهُمْ ﴾</p>
-            <h1 className="text-2xl font-bold text-primary md:text-3xl leading-relaxed">
+          <div className="px-8 pt-6 pb-5 text-center border-b border-cream">
+            <h1 className="text-4xl font-bold text-primary md:text-5xl leading-snug">
               {person.name}
             </h1>
-            <p className="mt-1 text-sm text-gray-500">{person.companion_text}</p>
+            <p className="mt-3 text-base text-gray-500">{person.companion_text}</p>
+          </div>
 
-            <div className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-cream/60 px-3 py-1 text-xs text-primary">
-              <Eye size={13} />
+          <div className="p-6">
+            <AudioPlayer audioFiles={audioList} audioBaseUrl={audioBaseUrl} />
+          </div>
+
+          <div className="border-t border-cream px-8 py-5 text-center">
+            <p dir="rtl" className="text-xs text-primary/60 mb-2">﴿ إِنَّا نَحْنُ نُحْيِي الْمَوْتَىٰ وَنَكْتُبُ مَا قَدَّمُوا وَآثَارَهُمْ ﴾</p>
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-cream/60 px-4 py-1.5 text-sm text-primary">
+              <Eye size={14} />
               <span>{person.visits.toLocaleString("en-US")} {d.visits}</span>
             </div>
           </div>
 
-          <div className="p-4">
-            <AudioPlayer audioFiles={audioList} audioBaseUrl={audioBaseUrl} />
-          </div>
-
-          <div className="border-t border-cream px-6 py-4">
-            <p className="mb-2 flex items-center justify-center gap-2 text-xs text-gray-400">
+          <div className="border-t border-cream px-8 py-6">
+            <p className="mb-3 flex items-center justify-center gap-2 text-xs text-gray-400">
               <Share2 size={13} />
               {d.shareMessage}
             </p>
             <ShareButtons url={`${siteUrl}/${locale}/${person.id}`} name={person.name} />
           </div>
         </div>
+
+        <Link
+          href={`/${locale}/register`}
+          className="mt-5 flex items-center justify-center gap-2 rounded-2xl border border-primary/20 bg-white py-4 text-sm font-bold text-primary shadow-sm transition hover:bg-cream/30"
+        >
+          {d.createYourOwn}
+        </Link>
       </div>
     </main>
   );
