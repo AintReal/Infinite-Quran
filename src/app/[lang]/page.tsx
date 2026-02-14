@@ -92,7 +92,7 @@ export default async function Home({ params }: Props) {
           <Image src="/logo.png" alt={d.siteTitle} width={140} height={140} className="brightness-0 invert" />
         </div>
 
-        <div className="relative z-10 flex flex-col items-center gap-4 px-4 text-center mt-16 pb-44 md:pb-36">
+        <div className="relative z-10 flex flex-col items-center gap-4 px-4 text-center mt-16 pb-56 md:pb-36">
           <h1 className="text-2xl font-bold leading-relaxed md:text-4xl max-w-3xl">
             {d.heroLine1}
           </h1>
