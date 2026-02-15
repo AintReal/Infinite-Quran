@@ -36,12 +36,24 @@ export async function GET(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   if (!isAuthed(req)) return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
 
-  const { id, status } = await req.json();
-  if (!id || !["approved", "rejected", "pending"].includes(status)) {
-    return NextResponse.json({ error: "بيانات غير صحيحة" }, { status: 400 });
+  const body = await req.json();
+  const { id, ...fields } = body;
+  if (!id) return NextResponse.json({ error: "معرف مطلوب" }, { status: 400 });
+
+  // Only allow updating these fields
+  const allowed = ["name", "companion_text", "country", "country_code", "status"] as const;
+  const update: Record<string, string> = { updated_at: new Date().toISOString() };
+
+  for (const key of allowed) {
+    if (fields[key] !== undefined) {
+      if (key === "status" && !["approved", "rejected", "pending"].includes(fields[key])) {
+        return NextResponse.json({ error: "حالة غير صحيحة" }, { status: 400 });
+      }
+      update[key] = fields[key];
+    }
   }
 
-  const { error } = await supabaseAdmin.from("deceased").update({ status, updated_at: new Date().toISOString() }).eq("id", id);
+  const { error } = await supabaseAdmin.from("deceased").update(update).eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   return NextResponse.json({ ok: true });

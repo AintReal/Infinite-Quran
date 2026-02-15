@@ -10,6 +10,12 @@ export default function NotFound() {
       <Link href="/" className="mt-2 text-sm font-medium text-primary underline underline-offset-4">
         العودة للرئيسية
       </Link>
+      <Link
+        href="/ar/register"
+        className="rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white shadow transition hover:bg-primary/80"
+      >
+        أنشئ صفحة قرآنية
+      </Link>
     </main>
   );
 }

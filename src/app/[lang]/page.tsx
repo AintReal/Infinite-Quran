@@ -9,7 +9,9 @@ export const revalidate = 60;
 
 async function getStats() {
   const { data } = await supabase.from("stats_overview").select("*").single();
-  return data ?? { total_approved: 0, total_pending: 0, total_visits: 0, total_countries: 0, today_registrations: 0 };
+  const legacyVisits = parseInt(process.env.LEGACY_VISITS || "0", 10);
+  const raw = data ?? { total_approved: 0, total_pending: 0, total_visits: 0, total_countries: 0, today_registrations: 0 };
+  return { ...raw, total_visits: raw.total_visits + legacyVisits };
 }
 
 async function getRecent() {
@@ -98,7 +100,7 @@ export default async function Home({ params }: Props) {
           </h1>
           <p className="text-lg md:text-2xl text-cream/80 font-medium">{d.heroLine2}</p>
 
-          <p dir="rtl" className="text-sm md:text-base text-white/50 mt-2 max-w-2xl">
+          <p dir="rtl" className="text-sm md:text-base text-white mt-2 max-w-2xl">
             ﴿ إِنَّا نَحْنُ نُحْيِي الْمَوْتَىٰ وَنَكْتُبُ مَا قَدَّمُوا وَآثَارَهُمْ ﴾
           </p>
           <p className="text-xs text-cream/40">{d.surahYasRef}</p>
@@ -155,7 +157,15 @@ export default async function Home({ params }: Props) {
       </section>
 
       <section className="mx-auto max-w-3xl px-4 py-16">
-        <h2 className="mb-8 text-center text-2xl font-bold text-primary">{d.recentRegistrations}</h2>
+        <div className="mb-8 flex items-center justify-between">
+          <h2 className="text-2xl font-bold text-primary">{d.recentRegistrations}</h2>
+          <Link
+            href={`/${locale}/browse`}
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            {d.viewAll}
+          </Link>
+        </div>
         <div className="grid gap-3 sm:grid-cols-2">
           {recent.map((person) => (
             <Link
@@ -211,9 +221,29 @@ export default async function Home({ params }: Props) {
         </section>
       )}
 
-      <div className="bg-primary py-8 text-center">
-        <p className="text-sm text-cream/80 leading-relaxed">{d.footerLine}</p>
-        <p className="mt-2 text-[11px] text-cream/40">{d.copyright}</p>
+      <div className="bg-primary py-8">
+        <div className="mx-auto max-w-3xl px-4">
+          <p className="text-sm text-cream/80 leading-relaxed text-center">{d.footerLine}</p>
+
+          <div className="mt-4 flex items-center justify-center gap-2 text-cream/60">
+            <span className="text-xs">{d.contactUs}:</span>
+            <a href="mailto:mhwari@gmail.com" className="text-xs text-cream underline underline-offset-2 hover:text-white transition">
+              mhwari@gmail.com
+            </a>
+          </div>
+
+          <div className="mt-4 flex items-center justify-between">
+            <a
+              href="https://Ather.sa"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] text-cream/40 hover:text-cream/70 transition"
+            >
+              {d.developedBy} Ather
+            </a>
+            <p className="text-[11px] text-cream/40">{d.copyright}</p>
+          </div>
+        </div>
       </div>
     </main>
   );

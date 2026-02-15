@@ -6,6 +6,7 @@ import { supabase, AUDIO_BUCKET, AUDIO_FOLDER } from "@/lib/supabase";
 import { t, isValidLocale, isRtl, type Locale } from "@/lib/i18n";
 import AudioPlayer from "@/components/AudioPlayer";
 import ShareButtons from "@/components/ShareButtons";
+import ReportForm from "@/components/ReportForm";
 import ViewTracker from "./ViewTracker";
 import CongratsPopup from "./CongratsPopup";
 
@@ -131,6 +132,8 @@ export default async function SlugPage({ params }: Props) {
             </Link>
           ) : <span />}
         </div>
+
+        <ReportForm pageId={numId} d={d} />
       </div>
     </main>
   );
