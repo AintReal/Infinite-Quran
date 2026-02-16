@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Users, Radio, Globe, Clock, Headphones, ArrowLeft, ArrowRight, TrendingUp } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { t, isRtl, type Locale } from "@/lib/i18n";
+import { getFlagUrl } from "@/lib/flags";
 import LangSwitcher from "@/components/LangSwitcher";
 
 export const revalidate = 60;
@@ -34,40 +35,6 @@ async function getMostListened() {
     .limit(6);
   return data ?? [];
 }
-
-const countryFlags: Record<string, string> = {
-  "السعودية": "🇸🇦", "Saudi Arabia": "🇸🇦", "Arab Saudi": "🇸🇦", "Arabie Saoudite": "🇸🇦",
-  "الإمارات": "🇦🇪", "UAE": "🇦🇪", "UEA": "🇦🇪", "EAU": "🇦🇪",
-  "الكويت": "🇰🇼", "Kuwait": "🇰🇼", "Koweït": "🇰🇼",
-  "البحرين": "🇧🇭", "Bahrain": "🇧🇭", "Bahreïn": "🇧🇭",
-  "قطر": "🇶🇦", "Qatar": "🇶🇦",
-  "عمان": "🇴🇲", "Oman": "🇴🇲",
-  "مصر": "🇪🇬", "Egypt": "🇪🇬", "Mesir": "🇪🇬", "Égypte": "🇪🇬",
-  "الأردن": "🇯🇴", "Jordan": "🇯🇴", "Yordania": "🇯🇴", "Jordanie": "🇯🇴",
-  "العراق": "🇮🇶", "Iraq": "🇮🇶", "Irak": "🇮🇶",
-  "فلسطين": "🇵🇸", "Palestine": "🇵🇸", "Palestina": "🇵🇸",
-  "لبنان": "🇱🇧", "Lebanon": "🇱🇧", "Liban": "🇱🇧",
-  "سوريا": "🇸🇾", "Syria": "🇸🇾", "Suriah": "🇸🇾", "Syrie": "🇸🇾",
-  "اليمن": "🇾🇪", "Yemen": "🇾🇪", "Yaman": "🇾🇪", "Yémen": "🇾🇪",
-  "ليبيا": "🇱🇾", "Libya": "🇱🇾", "Libye": "🇱🇾",
-  "تونس": "🇹🇳", "Tunisia": "🇹🇳", "Tunisie": "🇹🇳",
-  "الجزائر": "🇩🇿", "Algeria": "🇩🇿", "Aljazair": "🇩🇿", "Algérie": "🇩🇿",
-  "المغرب": "🇲🇦", "Morocco": "🇲🇦", "Maroko": "🇲🇦", "Maroc": "🇲🇦",
-  "السودان": "🇸🇩", "Sudan": "🇸🇩", "Soudan": "🇸🇩",
-  "الصومال": "🇸🇴", "Somalia": "🇸🇴", "Somalie": "🇸🇴",
-  "جيبوتي": "🇩🇯", "Djibouti": "🇩🇯",
-  "موريتانيا": "🇲🇷", "Mauritania": "🇲🇷", "Mauritanie": "🇲🇷",
-  "تركيا": "🇹🇷", "Turkey": "🇹🇷", "Turki": "🇹🇷", "Turquie": "🇹🇷",
-  "ماليزيا": "🇲🇾", "Malaysia": "🇲🇾", "Malaisie": "🇲🇾",
-  "إندونيسيا": "🇮🇩", "Indonesia": "🇮🇩", "Indonésie": "🇮🇩",
-  "باكستان": "🇵🇰", "Pakistan": "🇵🇰",
-  "الهند": "🇮🇳", "India": "🇮🇳", "Inde": "🇮🇳",
-  "فرنسا": "🇫🇷", "France": "🇫🇷", "Prancis": "🇫🇷",
-  "بريطانيا": "🇬🇧", "UK": "🇬🇧", "Inggris": "🇬🇧", "Royaume-Uni": "🇬🇧",
-  "أمريكا": "🇺🇸", "USA": "🇺🇸", "Amerika": "🇺🇸", "États-Unis": "🇺🇸",
-  "كندا": "🇨🇦", "Canada": "🇨🇦", "Kanada": "🇨🇦",
-  "ألمانيا": "🇩🇪", "Germany": "🇩🇪", "Jerman": "🇩🇪", "Allemagne": "🇩🇪",
-};
 
 type Props = { params: Promise<{ lang: string }> };
 
@@ -178,8 +145,8 @@ export default async function Home({ params }: Props) {
                   <Headphones size={16} />
                 </div>
                 <span className="font-medium text-gray-800">{person.name}</span>
-                {person.country && countryFlags[person.country] && (
-                  <span className="text-sm">{countryFlags[person.country]}</span>
+                {person.country && getFlagUrl(person.country) && (
+                  <img src={getFlagUrl(person.country)!} alt={person.country} width={16} height={12} className="inline-block" />
                 )}
               </div>
               <Arrow size={16} className="text-primary opacity-0 transition group-hover:opacity-100" />
@@ -225,13 +192,6 @@ export default async function Home({ params }: Props) {
         <div className="mx-auto max-w-3xl px-4">
           <p className="text-sm text-cream/80 leading-relaxed text-center">{d.footerLine}</p>
 
-          <div className="mt-4 flex items-center justify-center gap-2 text-cream/60">
-            <span className="text-xs">{d.contactUs}:</span>
-            <a href="mailto:mhwari@gmail.com" className="text-xs text-cream underline underline-offset-2 hover:text-white transition">
-              mhwari@gmail.com
-            </a>
-          </div>
-
           <div className="mt-4 flex items-center justify-between">
             <a
               href="https://Ather.sa"
@@ -239,7 +199,7 @@ export default async function Home({ params }: Props) {
               rel="noopener noreferrer"
               className="text-[11px] text-cream/40 hover:text-cream/70 transition"
             >
-              {d.developedBy} Ather
+              {d.developedBy}
             </a>
             <p className="text-[11px] text-cream/40">{d.copyright}</p>
           </div>

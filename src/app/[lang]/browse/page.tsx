@@ -6,26 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Search, Headphones, Eye, ArrowLeft, ArrowRight, Globe } from "lucide-react";
 import { t, isRtl, type Locale } from "@/lib/i18n";
-
-const countryFlags: Record<string, string> = {
-  "السعودية": "🇸🇦", "Saudi Arabia": "🇸🇦", "Arab Saudi": "🇸🇦", "Arabie Saoudite": "🇸🇦",
-  "الإمارات": "🇦🇪", "UAE": "🇦🇪", "UEA": "🇦🇪", "EAU": "🇦🇪",
-  "الكويت": "🇰🇼", "Kuwait": "🇰🇼", "Koweït": "🇰🇼",
-  "البحرين": "🇧🇭", "Bahrain": "🇧🇭", "Bahreïn": "🇧🇭",
-  "قطر": "🇶🇦", "Qatar": "🇶🇦", "عمان": "🇴🇲", "Oman": "🇴🇲",
-  "مصر": "🇪🇬", "Egypt": "🇪🇬", "Mesir": "🇪🇬", "Égypte": "🇪🇬",
-  "الأردن": "🇯🇴", "Jordan": "🇯🇴", "العراق": "🇮🇶", "Iraq": "🇮🇶",
-  "فلسطين": "🇵🇸", "Palestine": "🇵🇸", "لبنان": "🇱🇧", "Lebanon": "🇱🇧",
-  "سوريا": "🇸🇾", "Syria": "🇸🇾", "اليمن": "🇾🇪", "Yemen": "🇾🇪",
-  "ليبيا": "🇱🇾", "Libya": "🇱🇾", "تونس": "🇹🇳", "Tunisia": "🇹🇳",
-  "الجزائر": "🇩🇿", "Algeria": "🇩🇿", "المغرب": "🇲🇦", "Morocco": "🇲🇦",
-  "السودان": "🇸🇩", "Sudan": "🇸🇩", "تركيا": "🇹🇷", "Turkey": "🇹🇷",
-  "ماليزيا": "🇲🇾", "Malaysia": "🇲🇾", "إندونيسيا": "🇮🇩", "Indonesia": "🇮🇩",
-  "باكستان": "🇵🇰", "Pakistan": "🇵🇰", "الهند": "🇮🇳", "India": "🇮🇳",
-  "فرنسا": "🇫🇷", "France": "🇫🇷", "بريطانيا": "🇬🇧", "UK": "🇬🇧",
-  "أمريكا": "🇺🇸", "USA": "🇺🇸", "كندا": "🇨🇦", "Canada": "🇨🇦",
-  "ألمانيا": "🇩🇪", "Germany": "🇩🇪",
-};
+import { getFlagUrl } from "@/lib/flags";
 
 type Person = { id: number; name: string; country: string; visits: number; created_at: string; companion_text: string };
 
@@ -136,7 +117,7 @@ export default function BrowsePage() {
                 <div className="flex items-center gap-4 text-xs text-gray-400 border-t border-cream/60 pt-2 mt-1">
                   {person.country && (
                     <span className="flex items-center gap-1">
-                      {countryFlags[person.country] ? <span>{countryFlags[person.country]}</span> : <Globe size={12} />}
+                      {getFlagUrl(person.country) ? <img src={getFlagUrl(person.country)!} alt={person.country} width={16} height={12} className="inline-block" /> : <Globe size={12} />}
                       {person.country}
                     </span>
                   )}

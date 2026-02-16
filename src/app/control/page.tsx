@@ -126,7 +126,7 @@ export default function AdminDashboard() {
             <h1 className="text-lg font-bold text-primary">لوحة التحكم</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/control/reports" className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary transition">
+            <Link href="/control/reports" className="flex items-center gap-1 text-sm text-red-500 hover:text-red-700 transition">
               <AlertTriangle size={16} /> البلاغات
             </Link>
             <button onClick={logout} className="flex items-center gap-1 text-sm text-gray-500 hover:text-red-500 transition">
